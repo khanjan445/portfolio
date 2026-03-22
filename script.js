@@ -2,8 +2,32 @@
 const dynamicText = document.getElementById('dynamic-text');
 const skillsPanel = document.getElementById('skills-panel');
 const projectsPanel = document.getElementById('projects-panel');
+const experiencePanel = document.getElementById('experience-panel');
 const cursorGlow = document.querySelector('.cursor-glow');
 const magneticElements = document.querySelectorAll('.magnetic');
+
+// Shared panel close timer
+let panelCloseTimer = null;
+let activePanel = null;
+let activeSkillCard = null;
+let activeProjectCard = null;
+let activeExperienceNode = null;
+
+function updatePanelPosition() {
+    if (activePanel && (activeSkillCard || activeProjectCard || activeExperienceNode)) {
+        const card = activeSkillCard || activeProjectCard || activeExperienceNode;
+        const rect = card.getBoundingClientRect();
+
+        activePanel.style.top = `${rect.top + window.scrollY}px`;
+        activePanel.style.left = `${rect.right + 20 + window.scrollX}px`;
+
+        // Ensure panel does not go off-screen right
+        const panelRect = activePanel.getBoundingClientRect();
+        if (panelRect.right > window.innerWidth - 16) {
+            activePanel.style.left = `${Math.max(window.innerWidth - panelRect.width - 24, 16)}px`;
+        }
+    }
+}
 
 // Typing Animation Data
 const roles = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Tech Enthusiast', 'Creative Coder', 'Penetration Tester'];
@@ -54,6 +78,25 @@ const projectsData = {
         description: 'Cross-platform mobile application for task management with offline capabilities.',
         tech: ['React Native', 'Firebase', 'Redux'],
         image: 'https://via.placeholder.com/400x250/8b5cf6/ffffff?text=Project+3'
+    }
+};
+
+// Experience Data
+const experienceData = {
+    1: {
+        title: 'Senior Developer',
+        date: '2022 - Present',
+        description: 'Leading development of web applications and mentoring junior developers.'
+    },
+    2: {
+        title: 'Full Stack Developer',
+        date: '2020 - 2022',
+        description: 'Developed and maintained multiple client projects using modern technologies.'
+    },
+    3: {
+        title: 'Junior Developer',
+        date: '2019 - 2020',
+        description: 'Started my journey in web development, learning and applying new technologies.'
     }
 };
 
@@ -217,19 +260,65 @@ function initModalHandlers() {
         });
     });
 
-    // Close panels
-    document.querySelectorAll('.close-panel').forEach(closeBtn => {
-        closeBtn.addEventListener('click', () => {
+    // Experience panel
+    document.querySelectorAll('.tree-node').forEach(node => {
+        node.addEventListener('click', () => {
+            const experience = node.dataset.experience;
+            const data = experienceData[experience];
+
+            document.getElementById('panel-experience-title').textContent = data.title;
+            document.getElementById('panel-experience-date').textContent = data.date;
+            document.getElementById('panel-experience-description').textContent = data.description;
+
+            // Position panel next to clicked node
+            const rect = node.querySelector('.tree-content').getBoundingClientRect();
+            const panel = experiencePanel;
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                // Center the panel on mobile
+                panel.style.left = '50%';
+                panel.style.top = '50%';
+                panel.style.transform = 'translate(-50%, -50%)';
+            } else {
+                // Position next to content on desktop
+                panel.style.left = `${rect.right + 20}px`;
+                panel.style.top = `${rect.top}px`;
+                panel.style.transform = '';
+            }
+
+            panel.classList.add('active');
+            activePanel = panel;
+            activeExperienceNode = node;
+
+            // Auto-hide after 2 seconds
+            setTimeout(() => {
+                panel.classList.remove('active');
+                activePanel = null;
+                activeExperienceNode = null;
+            }, 2000);
+
+            // Close other panels
             skillsPanel.classList.remove('active');
             projectsPanel.classList.remove('active');
         });
     });
 
-    // Close on outside click
-    window.addEventListener('click', (e) => {
-        if (!e.target.closest('.skill-card') && !e.target.closest('.project-card') && !e.target.closest('.slide-panel')) {
+    // Close panels
+    document.querySelectorAll('.close-panel').forEach(closeBtn => {
+        closeBtn.addEventListener('click', () => {
             skillsPanel.classList.remove('active');
             projectsPanel.classList.remove('active');
+            experiencePanel.classList.remove('active');
+        });
+    });
+
+    // Close on outside click
+    window.addEventListener('click', (e) => {
+        if (!e.target.closest('.skill-card') && !e.target.closest('.project-card') && !e.target.closest('.tree-node') && !e.target.closest('.slide-panel')) {
+            skillsPanel.classList.remove('active');
+            projectsPanel.classList.remove('active');
+            experiencePanel.classList.remove('active');
         }
     });
 }
@@ -448,3 +537,7 @@ function createParticleBurst(e) {
         }, 1000);
     }
 }
+
+// Handle window resize + scroll for panel attachment
+document.addEventListener('scroll', updatePanelPosition);
+window.addEventListener('resize', updatePanelPosition);

@@ -193,7 +193,7 @@
             <h2 class="section-title">Experience</h2>
             <div class="experience-tree">
                 <div class="tree-branch left-branch">
-                    <div class="tree-node reveal">
+                    <div class="tree-node reveal" data-experience="1">
                         <div class="tree-dot"></div>
                         <div class="tree-content glass">
                             <h3>Senior Developer</h3>
@@ -203,7 +203,7 @@
                     </div>
                 </div>
                 <div class="tree-branch right-branch">
-                    <div class="tree-node reveal">
+                    <div class="tree-node reveal" data-experience="2">
                         <div class="tree-dot"></div>
                         <div class="tree-content glass">
                             <h3>Full Stack Developer</h3>
@@ -213,7 +213,7 @@
                     </div>
                 </div>
                 <div class="tree-branch left-branch">
-                    <div class="tree-node reveal">
+                    <div class="tree-node reveal" data-experience="3">
                         <div class="tree-dot"></div>
                         <div class="tree-content glass">
                             <h3>Junior Developer</h3>
@@ -223,6 +223,15 @@
                     </div>
                 </div>
                 <div class="tree-trunk"></div>
+                <!-- Experience Slide Panel -->
+                <div id="experience-panel" class="slide-panel">
+                    <div class="panel-content glass">
+                        <span class="close-panel">&times;</span>
+                        <h3 id="panel-experience-title"></h3>
+                        <span id="panel-experience-date" class="tree-date"></span>
+                        <p id="panel-experience-description"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

@@ -690,7 +690,7 @@ section {
 }
 
 .project-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-20px);
     box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
 }
 
