@@ -1,12 +1,12 @@
 // DOM Elements
 const dynamicText = document.getElementById('dynamic-text');
-const skillsModal = document.getElementById('skills-modal');
-const projectModal = document.getElementById('project-modal');
+const skillsPanel = document.getElementById('skills-panel');
+const projectsPanel = document.getElementById('projects-panel');
 const cursorGlow = document.querySelector('.cursor-glow');
 const magneticElements = document.querySelectorAll('.magnetic');
 
 // Typing Animation Data
-const roles = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Tech Enthusiast'];
+const roles = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Tech Enthusiast', 'Creative Coder', 'Penetration Tester'];
 let roleIndex = 0;
 let charIndex = 0;
 let isDeleting = false;
@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMagneticEffects();
     initCursorGlow();
     initFormHandler();
+    initExtraAnimations();
 });
 
 // Typing Animation
@@ -114,7 +115,7 @@ function initScrollAnimations() {
     }, observerOptions);
 
     // Observe elements
-    document.querySelectorAll('.reveal-text, .timeline-item, .skill-card, .project-card').forEach(el => {
+    document.querySelectorAll('.reveal-text, .tree-node, .skill-card, .project-card').forEach(el => {
         observer.observe(el);
     });
 
@@ -129,33 +130,57 @@ function initScrollAnimations() {
 
 // Modal Handlers
 function initModalHandlers() {
-    // Skills modal
+    // Skills panel
     document.querySelectorAll('.skill-card').forEach(card => {
         card.addEventListener('click', () => {
             const skill = card.dataset.skill;
             const data = skillsData[skill];
 
-            document.getElementById('modal-skill-title').textContent = data.title;
-            document.getElementById('progress-fill').style.setProperty('--progress-width', `${data.progress}%`);
-            document.getElementById('progress-text').textContent = `${data.progress}%`;
-            document.getElementById('modal-skill-description').textContent = data.description;
+            document.getElementById('panel-skill-title').textContent = data.title;
+            document.getElementById('panel-progress-fill').style.setProperty('--progress-width', `${data.progress}%`);
+            document.getElementById('panel-progress-text').textContent = `${data.progress}%`;
+            document.getElementById('panel-skill-description').textContent = data.description;
 
-            skillsModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+            // Position panel next to clicked card
+            const rect = card.getBoundingClientRect();
+            const panel = skillsPanel;
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                // Center the panel on mobile
+                panel.style.left = '50%';
+                panel.style.top = '50%';
+                panel.style.transform = 'translate(-50%, -50%)';
+            } else {
+                // Position next to card on desktop
+                panel.style.left = `${rect.right + 20}px`;
+                panel.style.top = `${rect.top}px`;
+                panel.style.transform = '';
+            }
+
+            panel.classList.add('active');
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                panel.classList.remove('active');
+            }, 2000);
+
+            // Close other panels
+            projectsPanel.classList.remove('active');
         });
     });
 
-    // Projects modal
+    // Projects panel
     document.querySelectorAll('.project-card').forEach(card => {
         card.addEventListener('click', () => {
             const project = card.dataset.project;
             const data = projectsData[project];
 
-            document.getElementById('modal-project-title').textContent = data.title;
-            document.getElementById('modal-project-description').textContent = data.description;
-            document.getElementById('modal-project-image').src = data.image;
+            document.getElementById('panel-project-title').textContent = data.title;
+            document.getElementById('panel-project-description').textContent = data.description;
+            document.getElementById('panel-project-image').src = data.image;
 
-            const techContainer = document.getElementById('modal-project-tech');
+            const techContainer = document.getElementById('panel-project-tech');
             techContainer.innerHTML = '';
             data.tech.forEach(tech => {
                 const span = document.createElement('span');
@@ -163,26 +188,48 @@ function initModalHandlers() {
                 techContainer.appendChild(span);
             });
 
-            projectModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+            // Position panel next to clicked card
+            const rect = card.getBoundingClientRect();
+            const panel = projectsPanel;
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                // Center the panel on mobile
+                panel.style.left = '50%';
+                panel.style.top = '50%';
+                panel.style.transform = 'translate(-50%, -50%)';
+            } else {
+                // Position next to card on desktop
+                panel.style.left = `${rect.right + 20}px`;
+                panel.style.top = `${rect.top}px`;
+                panel.style.transform = '';
+            }
+
+            panel.classList.add('active');
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                panel.classList.remove('active');
+            }, 2000);
+
+            // Close other panels
+            skillsPanel.classList.remove('active');
         });
     });
 
-    // Close modals
-    document.querySelectorAll('.close-modal').forEach(closeBtn => {
+    // Close panels
+    document.querySelectorAll('.close-panel').forEach(closeBtn => {
         closeBtn.addEventListener('click', () => {
-            skillsModal.style.display = 'none';
-            projectModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            skillsPanel.classList.remove('active');
+            projectsPanel.classList.remove('active');
         });
     });
 
     // Close on outside click
     window.addEventListener('click', (e) => {
-        if (e.target === skillsModal || e.target === projectModal) {
-            skillsModal.style.display = 'none';
-            projectModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+        if (!e.target.closest('.skill-card') && !e.target.closest('.project-card') && !e.target.closest('.slide-panel')) {
+            skillsPanel.classList.remove('active');
+            projectsPanel.classList.remove('active');
         }
     });
 }
@@ -211,22 +258,43 @@ function initCursorGlow() {
     let glowX = 0;
     let glowY = 0;
 
+    // Platform detection
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isTouch = 'ontouchstart' in window;
+
+    if (isMobile || isTouch) {
+        // Hide cursor glow on touch devices
+        cursorGlow.style.display = 'none';
+        document.body.style.cursor = 'auto';
+        return;
+    }
+
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
     });
 
     function updateGlow() {
-        glowX += (mouseX - glowX) * 0.1;
-        glowY += (mouseY - glowY) * 0.1;
+        glowX += (mouseX - glowX) * 0.15;
+        glowY += (mouseY - glowY) * 0.15;
 
-        cursorGlow.style.left = `${glowX - 10}px`;
-        cursorGlow.style.top = `${glowY - 10}px`;
+        cursorGlow.style.left = `${glowX - 12}px`;
+        cursorGlow.style.top = `${glowY - 12}px`;
 
         requestAnimationFrame(updateGlow);
     }
 
     updateGlow();
+
+    // Add hover effects for interactive elements
+    document.querySelectorAll('button, .skill-card, .project-card, .social-link, a').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorGlow.style.transform = 'scale(1.5)';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorGlow.style.transform = 'scale(1)';
+        });
+    });
 }
 
 // Smooth Scroll to Section
@@ -283,13 +351,100 @@ if ('ontouchstart' in window) {
     document.body.classList.add('touch-device');
 }
 
-// Preload images for better performance
-function preloadImages() {
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-        const image = new Image();
-        image.src = img.src;
+// Handle window resize for panel positioning
+window.addEventListener('resize', () => {
+    // Reposition active panels on resize
+    const activePanels = document.querySelectorAll('.slide-panel.active');
+    activePanels.forEach(panel => {
+        const isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            // Center the panel on mobile
+            panel.style.left = '50%';
+            panel.style.top = '50%';
+            panel.style.transform = 'translate(-50%, -50%)';
+        } else {
+            // Find the corresponding card and reposition
+            const isSkillPanel = panel === skillsPanel;
+            const cards = isSkillPanel ? document.querySelectorAll('.skill-card') : document.querySelectorAll('.project-card');
+
+            cards.forEach(card => {
+                if (card.matches(':hover')) {
+                    const rect = card.getBoundingClientRect();
+                    panel.style.left = `${rect.right + 20}px`;
+                    panel.style.top = `${rect.top}px`;
+                    panel.style.transform = '';
+                }
+            });
+        }
+    });
+});
+
+// Additional Animations and Effects
+function initExtraAnimations() {
+    // Add stagger animation to skill cards
+    const skillCards = document.querySelectorAll('.skill-card');
+    skillCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.2}s`;
+    });
+
+    // Add hover sound effect simulation (visual feedback)
+    document.querySelectorAll('.magnetic').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            el.style.animation = 'glowPulse 0.6s infinite';
+        });
+        el.addEventListener('mouseleave', () => {
+            el.style.animation = '';
+        });
+    });
+
+    // Add typing effect to about text
+    const aboutText = document.querySelector('.about-text p');
+    if (aboutText) {
+        const text = aboutText.textContent;
+        aboutText.textContent = '';
+        let i = 0;
+        const typeAbout = () => {
+            if (i < text.length) {
+                aboutText.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeAbout, 30);
+            }
+        };
+        // Trigger on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    typeAbout();
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        observer.observe(aboutText);
+    }
+
+    // Add particle burst on button hover
+    document.querySelectorAll('.cta-button, .submit-button').forEach(button => {
+        button.addEventListener('mouseenter', createParticleBurst);
     });
 }
 
-preloadImages();
+function createParticleBurst(e) {
+    const button = e.target;
+    const rect = button.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    for (let i = 0; i < 8; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${centerX}px`;
+        particle.style.top = `${centerY}px`;
+        particle.style.setProperty('--angle', `${i * 45}deg`);
+        document.body.appendChild(particle);
+
+        setTimeout(() => {
+            particle.remove();
+        }, 1000);
+    }
+}

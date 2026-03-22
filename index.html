@@ -31,8 +31,13 @@
             <div class="gradient-bg"></div>
             <div class="particles"></div>
         </div>
+        <div class="container">
+            <div class="photo-container">
+                <div class="photo-frame glass">
+                    <img src="https://via.placeholder.com/200x200/1e40af/ffffff?text=KDS" alt="Khanjan Dev Sarma" class="profile-photo">
+                    <div class="photo-glow"></div>
         <div class="hero-content">
-            <h1 class="hero-name">Your Name</h1>
+            <h1 class="hero-name">Khanjan Dev Sarma</h1>
             <div class="hero-tagline">
                 <span class="static-text">I'm a </span>
                 <span class="dynamic-text" id="dynamic-text"></span>
@@ -71,89 +76,110 @@
     <section id="skills" class="skills">
         <div class="container">
             <h2 class="section-title">Skills</h2>
-            <div class="skills-grid">
-                <div class="skill-card glass reveal" data-skill="javascript">
-                    <div class="skill-icon">JS</div>
-                    <h3>JavaScript</h3>
-                    <p>Modern ES6+ development</p>
+            <div class="skills-content">
+                <div class="skills-grid">
+                    <div class="skill-card glass reveal" data-skill="javascript">
+                        <div class="skill-icon">JS</div>
+                        <h3>JavaScript</h3>
+                        <p>Modern ES6+ development</p>
+                    </div>
+                    <div class="skill-card glass reveal" data-skill="react">
+                        <div class="skill-icon">⚛️</div>
+                        <h3>React</h3>
+                        <p>Component-based UI development</p>
+                    </div>
+                    <div class="skill-card glass reveal" data-skill="python">
+                        <div class="skill-icon">🐍</div>
+                        <h3>Python</h3>
+                        <p>Backend and data processing</p>
+                    </div>
+                    <div class="skill-card glass reveal" data-skill="design">
+                        <div class="skill-icon">🎨</div>
+                        <h3>UI/UX Design</h3>
+                        <p>User-centered design principles</p>
+                    </div>
                 </div>
-                <div class="skill-card glass reveal" data-skill="react">
-                    <div class="skill-icon">⚛️</div>
-                    <h3>React</h3>
-                    <p>Component-based UI development</p>
-                </div>
-                <div class="skill-card glass reveal" data-skill="python">
-                    <div class="skill-icon">🐍</div>
-                    <h3>Python</h3>
-                    <p>Backend and data processing</p>
-                </div>
-                <div class="skill-card glass reveal" data-skill="design">
-                    <div class="skill-icon">🎨</div>
-                    <h3>UI/UX Design</h3>
-                    <p>User-centered design principles</p>
+                <!-- Skills Slide Panel -->
+                <div id="skills-panel" class="slide-panel">
+                    <div class="panel-content glass">
+                        <span class="close-panel">&times;</span>
+                        <h3 id="panel-skill-title"></h3>
+                        <div class="skill-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="panel-progress-fill"></div>
+                            </div>
+                            <span class="progress-text" id="panel-progress-text"></span>
+                        </div>
+                        <p id="panel-skill-description"></p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Skills Modal -->
-    <div id="skills-modal" class="modal">
-        <div class="modal-content glass">
-            <span class="close-modal">&times;</span>
-            <h3 id="modal-skill-title"></h3>
-            <div class="skill-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
-                <span class="progress-text" id="progress-text"></span>
-            </div>
-            <p id="modal-skill-description"></p>
-        </div>
-    </div>
 
     <!-- Projects Section -->
     <section id="projects" class="projects">
         <div class="container">
             <h2 class="section-title">Projects</h2>
-            <div class="projects-grid">
-                <div class="project-card glass reveal" data-project="1">
-                    <div class="project-image">
-                        <img src="https://via.placeholder.com/400x250/6366f1/ffffff?text=Project+1" alt="Project 1">
+            <div class="projects-content">
+                <div class="projects-grid">
+                    <div class="project-card glass reveal" data-project="1">
+                        <div class="project-image">
+                            <img src="https://via.placeholder.com/400x250/6366f1/ffffff?text=Project+1" alt="Project 1">
+                        </div>
+                        <div class="project-content">
+                            <h3>E-Commerce Platform</h3>
+                            <p>A full-stack e-commerce solution with modern UI</p>
+                            <div class="project-tech">
+                                <span>React</span>
+                                <span>Node.js</span>
+                                <span>MongoDB</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="project-content">
-                        <h3>E-Commerce Platform</h3>
-                        <p>A full-stack e-commerce solution with modern UI</p>
-                        <div class="project-tech">
-                            <span>React</span>
-                            <span>Node.js</span>
-                            <span>MongoDB</span>
+                    <div class="project-card glass reveal" data-project="2">
+                        <div class="project-image">
+                            <img src="https://via.placeholder.com/400x250/06b6d4/ffffff?text=Project+2" alt="Project 2">
+                        </div>
+                        <div class="project-content">
+                            <h3>Data Visualization Dashboard</h3>
+                            <p>Interactive dashboard for real-time data analysis</p>
+                            <div class="project-tech">
+                                <span>D3.js</span>
+                                <span>Python</span>
+                                <span>Flask</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-card glass reveal" data-project="3">
+                        <div class="project-image">
+                            <img src="https://via.placeholder.com/400x250/8b5cf6/ffffff?text=Project+3" alt="Project 3">
+                        </div>
+                        <div class="project-content">
+                            <h3>Mobile App</h3>
+                            <p>Cross-platform mobile application</p>
+                            <div class="project-tech">
+                                <span>React Native</span>
+                                <span>Firebase</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="project-card glass reveal" data-project="2">
-                    <div class="project-image">
-                        <img src="https://via.placeholder.com/400x250/06b6d4/ffffff?text=Project+2" alt="Project 2">
-                    </div>
-                    <div class="project-content">
-                        <h3>Data Visualization Dashboard</h3>
-                        <p>Interactive dashboard for real-time data analysis</p>
-                        <div class="project-tech">
-                            <span>D3.js</span>
-                            <span>Python</span>
-                            <span>Flask</span>
+                <!-- Projects Slide Panel -->
+                <div id="projects-panel" class="slide-panel">
+                    <div class="panel-content glass project-panel-content">
+                        <span class="close-panel">&times;</span>
+                        <div class="panel-project-image">
+                            <img id="panel-project-image" src="" alt="">
                         </div>
-                    </div>
-                </div>
-                <div class="project-card glass reveal" data-project="3">
-                    <div class="project-image">
-                        <img src="https://via.placeholder.com/400x250/8b5cf6/ffffff?text=Project+3" alt="Project 3">
-                    </div>
-                    <div class="project-content">
-                        <h3>Mobile App</h3>
-                        <p>Cross-platform mobile application</p>
-                        <div class="project-tech">
-                            <span>React Native</span>
-                            <span>Firebase</span>
+                        <div class="panel-project-details">
+                            <h3 id="panel-project-title"></h3>
+                            <p id="panel-project-description"></p>
+                            <div class="panel-project-tech" id="panel-project-tech"></div>
+                            <div class="panel-project-links">
+                                <a href="#" class="project-link">Live Demo</a>
+                                <a href="#" class="project-link">GitHub</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -161,54 +187,42 @@
         </div>
     </section>
 
-    <!-- Project Modal -->
-    <div id="project-modal" class="modal">
-        <div class="modal-content glass project-modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="modal-project-image">
-                <img id="modal-project-image" src="" alt="">
-            </div>
-            <div class="modal-project-details">
-                <h3 id="modal-project-title"></h3>
-                <p id="modal-project-description"></p>
-                <div class="modal-project-tech" id="modal-project-tech"></div>
-                <div class="modal-project-links">
-                    <a href="#" class="project-link">Live Demo</a>
-                    <a href="#" class="project-link">GitHub</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Experience Section -->
     <section id="experience" class="experience">
         <div class="container">
             <h2 class="section-title">Experience</h2>
-            <div class="timeline">
-                <div class="timeline-item reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass">
-                        <h3>Senior Developer</h3>
-                        <span class="timeline-date">2022 - Present</span>
-                        <p>Leading development of web applications and mentoring junior developers.</p>
+            <div class="experience-tree">
+                <div class="tree-branch left-branch">
+                    <div class="tree-node reveal">
+                        <div class="tree-dot"></div>
+                        <div class="tree-content glass">
+                            <h3>Senior Developer</h3>
+                            <span class="tree-date">2022 - Present</span>
+                            <p>Leading development of web applications and mentoring junior developers.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="timeline-item reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass">
-                        <h3>Full Stack Developer</h3>
-                        <span class="timeline-date">2020 - 2022</span>
-                        <p>Developed and maintained multiple client projects using modern technologies.</p>
+                <div class="tree-branch right-branch">
+                    <div class="tree-node reveal">
+                        <div class="tree-dot"></div>
+                        <div class="tree-content glass">
+                            <h3>Full Stack Developer</h3>
+                            <span class="tree-date">2020 - 2022</span>
+                            <p>Developed and maintained multiple client projects using modern technologies.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="timeline-item reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass">
-                        <h3>Junior Developer</h3>
-                        <span class="timeline-date">2019 - 2020</span>
-                        <p>Started my journey in web development, learning and applying new technologies.</p>
+                <div class="tree-branch left-branch">
+                    <div class="tree-node reveal">
+                        <div class="tree-dot"></div>
+                        <div class="tree-content glass">
+                            <h3>Junior Developer</h3>
+                            <span class="tree-date">2019 - 2020</span>
+                            <p>Started my journey in web development, learning and applying new technologies.</p>
+                        </div>
                     </div>
                 </div>
+                <div class="tree-trunk"></div>
             </div>
         </div>
     </section>
