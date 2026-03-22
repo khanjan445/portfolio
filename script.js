@@ -12,16 +12,29 @@ let activePanel = null;
 let activeSkillCard = null;
 let activeProjectCard = null;
 let activeExperienceNode = null;
+let shakeTimer = null;
 
 function updatePanelPosition() {
     if (activePanel && (activeSkillCard || activeProjectCard || activeExperienceNode)) {
-        const card = activeSkillCard || activeProjectCard || activeExperienceNode;
-        const rect = card.getBoundingClientRect();
+        let targetEl = activeSkillCard || activeProjectCard || activeExperienceNode;
+        if (activeExperienceNode) {
+            targetEl = activeExperienceNode.querySelector('.tree-content');
+        }
+        const rect = targetEl.getBoundingClientRect();
 
-        activePanel.style.top = `${rect.top + window.scrollY}px`;
-        activePanel.style.left = `${rect.right + 20 + window.scrollX}px`;
         activePanel.style.top = `${rect.top}px`;
-        activePanel.style.left = `${rect.right + 20}px`;
+
+        if (activeExperienceNode) {
+            const isLeftBranch = activeExperienceNode.closest('.left-branch') !== null;
+            if (!isLeftBranch) {
+                const panelWidth = activePanel.offsetWidth || 450;
+                activePanel.style.left = `${Math.max(16, rect.left - panelWidth - 20)}px`;
+            } else {
+                activePanel.style.left = `${rect.right + 20}px`;
+            }
+        } else {
+            activePanel.style.left = `${rect.right + 20}px`;
+        }
 
         // Ensure panel does not go off-screen right
         const panelRect = activePanel.getBoundingClientRect();
@@ -111,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCursorGlow();
     initFormHandler();
     initExtraAnimations();
+    initInsaneBackground();
 });
 
 // Typing Animation
@@ -209,6 +223,10 @@ function initModalHandlers() {
             activeProjectCard = null;
             activeExperienceNode = null;
 
+            // Add rotation and move right animation to card
+            card.classList.add('skill-anim-right');
+            setTimeout(() => card.classList.remove('skill-anim-right'), 800);
+
             // Auto-hide after 5 seconds
             if (panelCloseTimer) clearTimeout(panelCloseTimer);
             panelCloseTimer = setTimeout(() => {
@@ -263,6 +281,12 @@ function initModalHandlers() {
             activeSkillCard = null;
             activeExperienceNode = null;
 
+            // Add move right animation to project card
+            card.classList.remove('project-anim-right');
+            void card.offsetWidth; // trigger reflow to reset animation if spammed
+            card.classList.add('project-anim-right');
+            setTimeout(() => card.classList.remove('project-anim-right'), 600);
+
             // Auto-hide after 5 seconds
             if (panelCloseTimer) clearTimeout(panelCloseTimer);
             panelCloseTimer = setTimeout(() => {
@@ -291,28 +315,44 @@ function initModalHandlers() {
             const panel = experiencePanel;
             const isMobile = window.innerWidth <= 768;
 
+            panel.classList.remove('pop-left', 'pop-right');
+            const isLeftBranch = node.closest('.left-branch') !== null;
+
             if (isMobile) {
                 // Center the panel on mobile
                 panel.style.left = '50%';
                 panel.style.top = '50%';
                 panel.style.transform = 'translate(-50%, -50%)';
             } else {
-                // Position next to content on desktop
-                panel.style.left = `${rect.right + 20}px`;
+                if (!isLeftBranch) {
+                    panel.classList.add('pop-left');
+                    panel.style.left = `${Math.max(16, rect.left - 450 - 20)}px`;
+                } else {
+                    panel.classList.add('pop-right');
+                    panel.style.left = `${rect.right + 20}px`;
+                }
                 panel.style.top = `${rect.top}px`;
                 panel.style.transform = '';
             }
+
+            // Trigger reflow to restart animation
+            void panel.offsetWidth;
 
             panel.classList.add('active');
             activePanel = panel;
             activeExperienceNode = node;
 
-            // Auto-hide after 2 seconds
-            setTimeout(() => {
+            // Add falling tree animation to node
+            node.classList.add('fall-anim');
+            setTimeout(() => node.classList.remove('fall-anim'), 1000);
+
+            // Auto-hide after 5 seconds
+            if (panelCloseTimer) clearTimeout(panelCloseTimer);
+            panelCloseTimer = setTimeout(() => {
                 panel.classList.remove('active');
                 activePanel = null;
                 activeExperienceNode = null;
-            }, 2000);
+            }, 5000);
 
             // Close other panels
             skillsPanel.classList.remove('active');
@@ -554,6 +594,173 @@ function createParticleBurst(e) {
     }
 }
 
+function createImpactBurst(element) {
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    // Create shockwave ring
+    const shockwave = document.createElement('div');
+    shockwave.className = 'impact-shockwave';
+    shockwave.style.left = `${centerX}px`;
+    shockwave.style.top = `${centerY}px`;
+    shockwave.style.width = '20px';
+    shockwave.style.height = '20px';
+    document.body.appendChild(shockwave);
+
+    setTimeout(() => shockwave.remove(), 600);
+
+    // Particle explosion
+    for (let i = 0; i < 16; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'impact-particle';
+        particle.style.left = `${centerX}px`;
+        particle.style.top = `${centerY}px`;
+        particle.style.setProperty('--angle', `${i * 22.5}deg`);
+        particle.style.background = i % 2 === 0 ? 'var(--primary)' : 'var(--accent)';
+        particle.style.boxShadow = `0 0 15px ${particle.style.background}`;
+        document.body.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 800);
+    }
+}
+
 // Handle window resize + scroll for panel attachment
 document.addEventListener('scroll', updatePanelPosition);
 window.addEventListener('resize', updatePanelPosition);
+
+// Insane Interactive Particle Network Background
+function initInsaneBackground() {
+    // Create and inject the canvas
+    const canvas = document.createElement('canvas');
+    canvas.id = 'insane-bg-canvas';
+    document.body.prepend(canvas);
+
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    
+    // Track mouse securely
+    let mouse = { x: -1000, y: -1000 };
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+    
+    window.addEventListener('mouseout', () => {
+        mouse.x = -1000;
+        mouse.y = -1000;
+    });
+
+    // Node networking configuration
+    const connectionDistance = 120;
+    const mouseDistance = 200;
+    
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initParticles(); 
+    }
+
+    window.addEventListener('resize', resize);
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 1.5;
+            this.vy = (Math.random() - 0.5) * 1.5;
+            this.radius = Math.random() * 1.5 + 0.5;
+            
+            // Pick a random vibrant neon color
+            const colors = ['rgba(59, 130, 246, 1)', 'rgba(96, 165, 250, 1)', 'rgba(139, 92, 246, 1)', 'rgba(99, 102, 241, 1)'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.glowColor = this.color.replace('1)', '0.3)'); // Creates a soft outer glow
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Wrap around edges for infinite flow
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+        }
+
+        draw() {
+            // Core bright particle
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            
+            // Soft glow aura
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius * 4, 0, Math.PI * 2);
+            ctx.fillStyle = this.glowColor;
+            ctx.fill();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        // Responsive node density map
+        const count = Math.min(Math.floor((width * height) / 9000), 180);
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            
+            // Draw line connections to neighbor nodes
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < connectionDistance) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(96, 165, 250, ${(1 - dist / connectionDistance) * 0.5})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+
+            // Interaction with Mouse Cursor
+            const dxMouse = particles[i].x - mouse.x;
+            const dyMouse = particles[i].y - mouse.y;
+            const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+            if (distMouse < mouseDistance) {
+                ctx.beginPath();
+                // Draw glowing active link to mouse
+                ctx.strokeStyle = `rgba(139, 92, 246, ${(1 - distMouse / mouseDistance) * 0.8})`;
+                ctx.lineWidth = 1.2;
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(mouse.x, mouse.y);
+                ctx.stroke();
+
+                // Physics: particles dynamically drift away from direct cursor impact
+                const dodgeForce = ((mouseDistance - distMouse) / mouseDistance) * 0.05;
+                particles[i].x += (dxMouse / distMouse) * dodgeForce;
+                particles[i].y += (dyMouse / distMouse) * dodgeForce;
+            }
+            
+            particles[i].draw();
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    resize();
+    animate();
+}

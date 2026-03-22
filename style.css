@@ -11,7 +11,7 @@ html {
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0a0a0a;
+    background: #050505;
     color: #ffffff;
     overflow-x: hidden;
     line-height: 1.6;
@@ -119,7 +119,7 @@ body {
 /* Photo Section */
 .photo-section {
     padding: 2rem 0;
-    background: linear-gradient(135deg, #000000 0%, #0f172a 50%, #1e293b 100%);
+    background: transparent;
     position: relative;
     overflow: hidden;
 }
@@ -229,6 +229,7 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
+    display: none;
 }
 
 .gradient-bg {
@@ -576,14 +577,12 @@ section {
 /* Slide Panels */
 .slide-panel {
     position: fixed;
-    width: 350px;
+    width: 450px;
     height: auto;
-    max-height: 80vh;
+    max-height: 85vh;
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
-    transform: translateX(20px);
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
@@ -592,8 +591,46 @@ section {
 .slide-panel.active {
     opacity: 1;
     visibility: visible;
-    transform: translateX(0);
     pointer-events: auto;
+}
+.slide-panel {
+    position: fixed;
+    width: 300px;       /* This sets the breadth (width) */
+    height: auto;       /* This allows the length (height) to grow with the text */
+    max-height: 95vh;   /* This restricts the max length to 85% of the viewport height */
+    z-index: 2000;
+    /* ... other styles ... */
+}
+
+/* Specific Panel Animations */
+#skills-panel {
+    transform: translateX(-100px) perspective(1000px) rotateY(-90deg) scale(0.8);
+    transform-origin: left center;
+    transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#skills-panel.active {
+    transform: translateX(0) perspective(1000px) rotateY(0deg) scale(1);
+}
+
+#projects-panel {
+    transform: scale(0.95);
+    transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
+}
+#projects-panel.active {
+    transform: scale(1);
+}
+
+#experience-panel {
+    transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#experience-panel.pop-right:not(.active) {
+    transform: translateX(-50px) scale(0.95);
+}
+#experience-panel.pop-left:not(.active) {
+    transform: translateX(50px) scale(0.95);
+}
+#experience-panel.active {
+    transform: translateX(0) scale(1);
 }
 
 .slide-panel,
@@ -626,7 +663,7 @@ section {
 .project-panel-content {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 .panel-project-image img {
@@ -796,7 +833,7 @@ section {
 /* 🌳 CENTER TRUNK */
 .tree-trunk {
     position: absolute;
-    top: -2.5%;
+    top: -2.%;
     left: 50%;
     transform: translateX(-50%);
     width: 5px;
@@ -808,14 +845,14 @@ section {
 /* 🌿 BRANCH BASE */
 .tree-branch {
     position: absolute;
-    width: 50%;
+    width: 20%;
     display: flex;
     align-items: center;
 }
 
 /* LEFT SIDE */
 .left-branch {
-    left: 0;
+    left: 2;
     justify-content: flex-end;
 }
 
@@ -827,8 +864,8 @@ section {
 
 /* 🌿 VERTICAL POSITIONS */
 .tree-branch:nth-child(1) { top: 20%; }
-.tree-branch:nth-child(2) { top: 45%; }
-.tree-branch:nth-child(3) { top: 78%; }
+.tree-branch:nth-child(2) { top: 40%; }
+.tree-branch:nth-child(3) { top: 60%; }
 
 .tree-branch {
     height: auto;
@@ -857,7 +894,7 @@ section {
     padding: 1.75rem;
     min-width: 340px;
     max-width: 420px;
-    width: 42%;
+    width: 72%;
     background: rgba(255,255,255,0.04);
     border-radius: 16px;
     backdrop-filter: blur(12px);
@@ -870,19 +907,19 @@ section {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 70px;
+    width: 200px;
     height: 3px;
     background: var(--secondary);
 }
 
 /* LEFT CONNECTOR */
 .left-branch .tree-content::before {
-    right: -40px;
+    right: -120px;
 }
 
 /* RIGHT CONNECTOR */
 .right-branch .tree-content::before {
-    left: -40px;
+    left: -130px;
 }
 
 /* TEXT */
@@ -894,7 +931,7 @@ section {
 
 .tree-date {
     color: var(--secondary);
-    font-weight: 600;
+    font-weight: 100;
     margin-bottom: 1rem;
     display: block;
 }
@@ -1036,6 +1073,18 @@ section {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
+/* Insane Background Canvas */
+#insane-bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -10;
+    pointer-events: none;
+    background: radial-gradient(circle at center, #0f172a 0%, #000000 100%);
+}
+
 /* Magnetic Effect */
 .magnetic {
     transition: transform 0.3s cubic-bezier(0.23, 1, 0.320, 1);
@@ -1072,7 +1121,7 @@ section {
 
     .slide-panel {
         width: 90%;
-        max-width: 350px;
+        max-width: 450px;
     }
 
     .skills-grid {
@@ -1102,7 +1151,7 @@ section {
     }
 
     .tree-content {
-        margin: 1rem 0 0 0;
+        margin: 2rem 0 0 0;
     }
 
     .tree-content::before {
@@ -1218,4 +1267,80 @@ section {
         transform: translate(calc(50px * cos(var(--angle))), calc(50px * sin(var(--angle)))) scale(0);
         opacity: 0;
     }
+}
+
+/* Custom Click Animations */
+@keyframes skillPopRotateRight {
+    0% { transform: perspective(600px) rotateY(0) translateX(0) scale(1.04); filter: brightness(1); }
+    15% { transform: perspective(600px) rotateY(-15deg) translateX(-20px) scale(0.9); filter: brightness(0.7); }
+    30% { transform: perspective(600px) rotateY(35deg) translateX(70px) scale(1.15); filter: brightness(2.5) drop-shadow(0 0 40px var(--accent)); }
+    55% { transform: perspective(600px) rotateY(-10deg) translateX(-10px) scale(0.95); filter: brightness(1); }
+    75% { transform: perspective(600px) rotateY(5deg) translateX(5px) scale(1.02); }
+    100% { transform: perspective(600px) rotateY(0) translateX(0) scale(1.04); filter: brightness(1); }
+}
+
+.skill-anim-right {
+    animation: skillPopRotateRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+@keyframes projectMoveRight {
+    0% { transform: translateX(0) scale(1.04); }
+    40% { transform: translateX(60px) scale(1.04); }
+    100% { transform: translateX(0) scale(1.04); }
+}
+
+.project-anim-right {
+    animation: projectMoveRight 0.6s ease-out !important;
+}
+
+@keyframes treeFall {
+    0% { transform: rotate(0deg) translateY(0); }
+    20% { transform: rotate(-15deg) translateY(5px); }
+    40% { transform: rotate(10deg) translateY(15px); }
+    60% { transform: rotate(-5deg) translateY(25px); }
+    80% { transform: rotate(2deg) translateY(30px); opacity: 0.5; }
+    100% { transform: rotate(0deg) translateY(0); opacity: 1; }
+}
+
+.fall-anim {
+    animation: treeFall 1s ease-in-out !important;
+}
+
+/* Impact Effects */
+.impact-shockwave {
+    position: fixed;
+    border: 4px solid var(--accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: none;
+    z-index: 9999;
+    animation: shockwaveExpand 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes shockwaveExpand {
+    to { transform: translate(-50%, -50%) scale(20); opacity: 0; border-width: 0; }
+}
+
+.impact-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    animation: impactExplosion 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes impactExplosion {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(calc(120px * cos(var(--angle))), calc(120px * sin(var(--angle)))) scale(0); opacity: 0; }
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    20% { transform: translate(-5px, 5px) rotate(-1deg); }
+    40% { transform: translate(5px, -5px) rotate(1deg); }
+    60% { transform: translate(-3px, -3px) rotate(0); }
+    80% { transform: translate(3px, 3px) rotate(0); }
 }
