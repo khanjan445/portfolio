@@ -326,7 +326,8 @@ function initModalHandlers() {
             } else {
                 if (!isLeftBranch) {
                     panel.classList.add('pop-left');
-                    panel.style.left = `${Math.max(16, rect.left - 450 - 20)}px`;
+                    const panelWidth = panel.offsetWidth || 300;
+                    panel.style.left = `${Math.max(16, rect.left - panelWidth - 20)}px`;
                 } else {
                     panel.classList.add('pop-right');
                     panel.style.left = `${rect.right + 20}px`;
